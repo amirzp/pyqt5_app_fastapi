@@ -1,9 +1,7 @@
-from fastapi import Depends, status, HTTPException
-from user import schemas, models
-from database import database
-from sqlalchemy.orm import Session
 from passlib.context import CryptContext
-from app_main import app
+from sqlalchemy.orm import Session
+from fastapi import HTTPException, status
+from user import models
 
 
 # ##### make hash password >>
@@ -19,26 +17,17 @@ def get_password_hash(password):
 # ## <<
 
 
-# #### get query on database >>
-def get_db():
-    db = database.SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
-
 # #### get user in db if user is exist >>
 def check_user(user: str, db: Session):
     """چک کردن یوزر در صورت وجود نداشتن برای ساخت یوزر جدید"""
+
     user = db.query(models.UserModel).filter(models.UserModel.username == user).first()
     if user is None:
         return True
     return False
 
 
-@app.post('/user', status_code=status.HTTP_201_CREATED)
-def post_users(request: schemas.UserSchemas, db: Session = Depends(get_db)):
+def create(request, db):
     """ساخت یوزر جدید"""
 
     flag = check_user(request.username, db)
@@ -55,8 +44,7 @@ def post_users(request: schemas.UserSchemas, db: Session = Depends(get_db)):
     return new_user
 
 
-@app.get('/user/{_id}', status_code=status.HTTP_200_OK, response_model=schemas.OutUserSchemas)
-def get_user(_id: int, db: Session = Depends(get_db)):
+def get_user(db, _id: int):
     """برگشت یک یورز در صورت وجود"""
 
     user = db.query(models.UserModel).filter(models.UserModel.id == _id).first()

@@ -15,6 +15,7 @@ class UserSchemas(BaseModel):
 class OutUserSchemas(BaseModel):
     class Config:
         orm_mode = True
+    id: int
     username: str
     first_name: str
     last_name: str

@@ -1,29 +1,16 @@
-from fastapi import Depends, status, Response, HTTPException
-from contact import schemas
 from contact import models
-from database import database
-from sqlalchemy.orm import Session
-from app_main import app
+from fastapi import HTTPException, status
 
 
-# #### get query on database >>
-def get_db():
-    db = database.SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
-
-@app.post('/contact', status_code=status.HTTP_201_CREATED)
-def create_contact(request: schemas.ContactSchemas, db: Session = Depends(get_db)):
+def create(request, db):
     """ساخت مخاطب جدید"""
 
     # new_contact = models.ContactModel(
     #     name=request.name,
     #     family=request.family,
     #     phone=request.phone,
-    #     email=request.email
+    #     email=request.email,
+    #     user=1
     # )
     new_contact = models.ContactModel(**request.dict())
 
@@ -33,8 +20,7 @@ def create_contact(request: schemas.ContactSchemas, db: Session = Depends(get_db
     return new_contact
 
 
-@app.get('/contact', status_code=status.HTTP_200_OK)
-def get_contacts(db: Session = Depends(get_db)):
+def get_contacts(db):
     """برگشت تمام مخاطبین"""
 
     contacts = db.query(models.ContactModel).all()
@@ -43,8 +29,7 @@ def get_contacts(db: Session = Depends(get_db)):
     return contacts
 
 
-@app.get('/contact/{_id}', status_code=status.HTTP_200_OK)
-def get_contact(_id: int,  response: Response, db: Session = Depends(get_db)):
+def get_contact(db, _id: int):
     """برگشت یک مخاطب در صورت وجود"""
 
     contact = db.query(models.ContactModel).filter(models.ContactModel.id == _id).first()
@@ -58,8 +43,7 @@ def get_contact(_id: int,  response: Response, db: Session = Depends(get_db)):
     return contact
 
 
-@app.delete('/contact/{_id}')
-def delete_contact(_id: int, db: Session = Depends(get_db)):
+def delete(db, _id: int):
     """پاک کردن یک مخاطب در صورت وجود"""
 
     contact = db.query(models.ContactModel).get(_id)
@@ -76,8 +60,7 @@ def delete_contact(_id: int, db: Session = Depends(get_db)):
     # headers={"WWW-Authenticate": "Bearer"}
 
 
-@app.put('/contact/{_id}', status_code=status.HTTP_202_ACCEPTED)
-def contact_update(request: schemas.ContactSchemas, _id: int, db: Session = Depends(get_db)):
+def update(request, db, _id: int):
     """آپدیت یک مخاطب در صورت وجود"""
 
     contact = db.query(models.ContactModel).get(_id)
@@ -88,6 +71,3 @@ def contact_update(request: schemas.ContactSchemas, _id: int, db: Session = Depe
         )
     db.query(models.ContactModel).filter(models.ContactModel.id == _id).update(request.dict())
     db.commit()
-
-
-

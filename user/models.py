@@ -1,5 +1,5 @@
 from sqlalchemy import Boolean, Column, Integer, String
-from sqlalchemy.orm import relationship
+# from sqlalchemy.orm import relationship
 from database.database import Base
 
 
@@ -15,4 +15,4 @@ class UserModel(Base):
     is_staff = Column(Boolean, default=True)
     password = Column(String, index=True)
 
-    items = relationship("ContactModel", back_populates="owner")
+    # items = relationship("ContactModel", back_populates="owner")

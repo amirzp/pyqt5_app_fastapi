@@ -1,5 +1,5 @@
 from sqlalchemy import Column, ForeignKey, Integer, String
-from sqlalchemy.orm import relationship
+# from sqlalchemy.orm import relationship
 from database.database import Base
 
 
@@ -13,4 +13,4 @@ class ContactModel(Base):
     email = Column(String, index=True)
     user = Column(Integer, ForeignKey("users.id"))
 
-    owner = relationship("UserModel", back_populates="items")
+    # owner = relationship("UserModel", back_populates="items")
