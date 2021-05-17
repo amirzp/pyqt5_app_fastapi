@@ -72,8 +72,6 @@ def delete(db, user_id, _id: int):
     ).delete(synchronize_session=False)
     db.commit()
 
-    # headers={"WWW-Authenticate": "Bearer"}
-
 
 def update(request, db, user_id, _id: int):
     """آپدیت یک مخاطب در صورت وجود"""
