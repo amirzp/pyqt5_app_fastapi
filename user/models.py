@@ -8,9 +8,9 @@ class UserModel(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     username = Column(String, unique=True, index=True)
-    first_name = Column(String, index=True)
-    last_name = Column(String, index=True)
-    email = Column(String)
+    first_name = Column(String, index=True, default='firs name')
+    last_name = Column(String, index=True, default='last name')
+    email = Column(String, default="user@example.com")
     is_active = Column(Boolean, default=True)
     is_staff = Column(Boolean, default=True)
     password = Column(String, index=True)

@@ -1,6 +1,6 @@
 from pydantic import BaseModel, EmailStr
-from typing import List
-from user.schemas import OutUserSchemas
+# from typing import List
+# from user.schemas import OutUserSchemas
 
 
 class ContactSchemas(BaseModel):
@@ -15,9 +15,9 @@ class OutContactSchemas(BaseModel):
     class Config:
         orm_mode = True
     id: int
+    user: int
     name: str
     family: str
     phone: str
     email: EmailStr
-    user: int
     # owner: OutUserSchemas

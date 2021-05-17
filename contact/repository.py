@@ -20,19 +20,29 @@ def create(request, db):
     return new_contact
 
 
-def get_contacts(db):
+def get_contacts(db, user_id):
     """برگشت تمام مخاطبین"""
 
-    contacts = db.query(models.ContactModel).all()
+    contacts = db.query(models.ContactModel).filter(
+        models.ContactModel.user == user_id
+    ).all()
+
     if not contacts:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Contact list is empty')
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail='Contact list is empty'
+        )
     return contacts
 
 
-def get_contact(db, _id: int):
+def get_contact(db, user_id, _id: int):
     """برگشت یک مخاطب در صورت وجود"""
 
-    contact = db.query(models.ContactModel).filter(models.ContactModel.id == _id).first()
+    contact = db.query(models.ContactModel).filter(
+        models.ContactModel.user == user_id
+    ).filter(
+        models.ContactModel.id == _id
+    ).first()
     if contact is None:
         # response.status_code = status.HTTP_404_NOT_FOUND
         # return {'detail': f"Contact with the ID: {_id} not available"}
@@ -43,10 +53,15 @@ def get_contact(db, _id: int):
     return contact
 
 
-def delete(db, _id: int):
+def delete(db, user_id, _id: int):
     """پاک کردن یک مخاطب در صورت وجود"""
 
-    contact = db.query(models.ContactModel).get(_id)
+    contact = db.query(models.ContactModel).filter(
+        models.ContactModel.user == user_id
+    ).filter(
+        models.ContactModel.id == _id
+    ).first()
+
     if contact is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -60,14 +75,21 @@ def delete(db, _id: int):
     # headers={"WWW-Authenticate": "Bearer"}
 
 
-def update(request, db, _id: int):
+def update(request, db, user_id, _id: int):
     """آپدیت یک مخاطب در صورت وجود"""
 
-    contact = db.query(models.ContactModel).get(_id)
+    contact = db.query(models.ContactModel).filter(
+        models.ContactModel.user == user_id
+    ).filter(
+        models.ContactModel.id == _id
+    ).first()
     if contact is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Contact with the ID: {_id} not available"
         )
-    db.query(models.ContactModel).filter(models.ContactModel.id == _id).update(request.dict())
+    db.query(models.ContactModel).filter(
+        models.ContactModel.id == _id
+    ).update(request.dict())
     db.commit()
+    return {'detail': f'Contact with the ID: {_id} is updated.'}
