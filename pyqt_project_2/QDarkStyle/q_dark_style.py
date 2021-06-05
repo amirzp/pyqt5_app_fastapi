@@ -1011,7 +1011,7 @@ def q_dark_style():
       border: 1px solid #32414B;
       color: #F0F0F0;
       border-radius: 4px;
-      padding: 12px;
+      padding: 8px;
       outline: none;
       /* Issue #194 - Special case of QPushButton inside dialogs, for better UI */
     }
